@@ -36,14 +36,20 @@
       }
 
       btn.disabled = true;
-      btn.textContent = "Signing in…";
-     btn.disabled = true;
-     btn.style.opacity = '0.7';
-     btn.style.cursor = 'not-allowed';
-          const btnContent = btn.querySelector('.btn-content');
-          const btnLoader = btn.querySelector('.btn-loader');
-          btnContent.style.display = 'none';
-          btnLoader.style.display = 'inline';
+      btn.style.opacity = '0.75';
+      btn.style.cursor = 'not-allowed';
+      const btnContent = btn.querySelector('.btn-content');
+      const btnLoader = btn.querySelector('.btn-loader');
+      if (btnContent) btnContent.style.display = 'none';
+      if (btnLoader) btnLoader.style.display = 'inline-flex';
+
+      function resetLoginBtn() {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+        if (btnContent) btnContent.style.display = 'inline-flex';
+        if (btnLoader) btnLoader.style.display = 'none';
+      }
 
       try {
         const res = await fetch("/api/auth/login", {
@@ -55,24 +61,14 @@
         const data = await res.json();
         if (!res.ok) {
           showError(data.error || "Login failed.");
-          btn.disabled = false;
-          btn.textContent = "Sign In";
-          btn.style.opacity = '1';
-          btn.style.cursor = 'pointer';
-          btnContent.style.display = 'flex';
-          btnLoader.style.display = 'none';
+          resetLoginBtn();
           return;
         }
 
         window.location.href = "/admin";
       } catch (err) {
         showError("Network error. Please try again.");
-        btn.disabled = false;
-        btn.textContent = "Sign In";
-        btn.style.opacity = '1';
-        btn.style.cursor = 'pointer';
-        btnContent.style.display = 'flex';
-        btnLoader.style.display = 'none';
+        resetLoginBtn();
       }
     });
   }
@@ -137,71 +133,32 @@
         }
       }, 400);
     });
-
-    const copyBtn = document.getElementById("copyProfileBtn");
-    if (copyBtn) {
-      copyBtn.addEventListener("click", async function () {
-        const username = input.value.trim();
-
-        if (!username) {
-          copyBtn.textContent = "No username!";
-          copyBtn.style.background = "#ef4444";
-          setTimeout(() => {
-            copyBtn.textContent = "Copy";
-            copyBtn.style.background = "#a855f7";
-          }, 2000);
-          return;
-        }
-
-        const profileLink = `conn.com/u/${username}`;
-
-        try {
-          await navigator.clipboard.writeText(profileLink);
-        } catch {
-          // Fallback for older browsers
-          const tmp = document.createElement("input");
-          tmp.value = profileLink;
-          document.body.appendChild(tmp);
-          tmp.select();
-          document.execCommand("copy");
-          document.body.removeChild(tmp);
-        }
-
-        copyBtn.textContent = "Copied ✓";
-        copyBtn.style.background = "#22c55e";
-        setTimeout(() => {
-          copyBtn.textContent = "Copy";
-          copyBtn.style.background = "#a855f7";
-        }, 2000);
-      });
-    }
   }
 
   // ─── Copy Profile Link ───
   function initCopyProfileBtn() {
     const btn = document.getElementById('copyProfileBtn');
     const preview = document.getElementById('usernamePreview');
-    if (!btn || !preview) return;
+    const input = document.getElementById('signupUsername');
+    if (!btn) return;
 
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
 
-      // Get the username from the preview
-      const username = preview.textContent;
+      // Get the username from input or preview
+      const username = (input ? input.value.trim() : '') || (preview ? preview.textContent.trim() : '');
       if (!username || username === 'your-username') {
         showError('Please enter a username first.');
         return;
       }
 
-      // Construct the profile URL using current origin
+      // Construct the profile URL
       const profileUrl = `${window.location.origin}/u/${username}`;
 
       try {
-        // Try using the modern Clipboard API
         if (navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(profileUrl);
         } else {
-          // Fallback for older browsers
           const textarea = document.createElement('textarea');
           textarea.value = profileUrl;
           textarea.style.position = 'fixed';
@@ -212,16 +169,13 @@
           document.body.removeChild(textarea);
         }
 
-        // Show "Copied!" feedback
         const originalText = btn.textContent;
-        const originalBg = btn.style.background;
-        btn.textContent = 'Copied!';
-        btn.style.background = '#4ade80';
+        btn.textContent = 'Copied ✓';
+        btn.style.background = '#22c55e';
 
-        // Revert after 2 seconds
         setTimeout(() => {
           btn.textContent = originalText;
-          btn.style.background = originalBg;
+          btn.style.background = '';
         }, 2000);
       } catch (err) {
         showError('Failed to copy. Please try again.');
@@ -337,14 +291,20 @@
       }
 
       btn.disabled = true;
-      btn.textContent = "Creating account…";
-      btn.style.opacity = '0.7';
+      btn.style.opacity = '0.75';
       btn.style.cursor = 'not-allowed';
       const btnContent = btn.querySelector('.btn-content');
       const btnLoader = btn.querySelector('.btn-loader');
+      if (btnContent) btnContent.style.display = 'none';
+      if (btnLoader) btnLoader.style.display = 'inline-flex';
 
-btnContent.style.display = 'none';
-btnLoader.style.display = 'inline';
+      function resetSignupBtn() {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+        if (btnContent) btnContent.style.display = 'inline-flex';
+        if (btnLoader) btnLoader.style.display = 'none';
+      }
 
       try {
         const res = await fetch("/api/auth/register", {
@@ -356,24 +316,14 @@ btnLoader.style.display = 'inline';
         const data = await res.json();
         if (!res.ok) {
           showError(data.error || "Registration failed.");
-          btn.disabled = false;
-          btn.textContent = "Create Account";
-          btn.style.opacity = '1';
-          btn.style.cursor = 'pointer';
-          btnContent.style.display = 'flex';
-          btnLoader.style.display = 'none';
+          resetSignupBtn();
           return;
         }
 
         window.location.href = "/admin";
       } catch (err) {
         showError("Network error. Please try again.");
-        btn.disabled = false;
-        btn.textContent = "Create Account";
-        btn.style.opacity = '1';
-        btn.style.cursor = 'pointer';
-        btnContent.style.display = 'flex';
-        btnLoader.style.display = 'none';
+        resetSignupBtn();
       }
     });
   }

@@ -368,6 +368,9 @@ app.get('/team', (req, res) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// ─── Dev: silence Vercel Analytics requests locally ───
+app.get('/_vercel/*', (req, res) => res.status(204).end());
+
 // ──────────────────── AUTH ROUTES ────────────────────
 
 app.post('/api/auth/register', registerLimiter, async (req, res) => {
@@ -432,7 +435,12 @@ app.post('/api/auth/register', registerLimiter, async (req, res) => {
 
     if (insertError) {
       console.error('Register insert error:', insertError);
-      return res.status(500).json({ error: 'Server error. Please try again.' });
+      // Surface the exact DB error in development for easier debugging
+      const isDev = process.env.NODE_ENV !== 'production' && !process.env.VERCEL;
+      const message = isDev
+        ? `DB error: ${insertError.message || JSON.stringify(insertError)}`
+        : 'Server error. Please try again.';
+      return res.status(500).json({ error: message });
     }
 
     // Initialize user data (profile, settings)

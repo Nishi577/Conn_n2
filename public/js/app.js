@@ -312,7 +312,18 @@
       const grouped = data.grouped || [];
       
       if (grouped.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: var(--text-secondary); margin-top: 2rem;">No links yet</p>';
+        container.innerHTML = `
+          <div class="profile-empty-state">
+            <div class="profile-empty-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+              </svg>
+            </div>
+            <h3 class="profile-empty-title">No links yet</h3>
+            <p class="profile-empty-desc">This profile hasn't added any links yet. Check back soon!</p>
+          </div>
+        `;
         return;
       }
 
@@ -349,6 +360,22 @@
       });
     } catch (err) {
       console.error('Failed to load links:', err);
+      const container = document.getElementById('linksContainer');
+      if (container) {
+        container.innerHTML = `
+          <div class="profile-empty-state">
+            <div class="profile-empty-icon" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.25); color: #f87171;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </div>
+            <h3 class="profile-empty-title">Unable to load links</h3>
+            <p class="profile-empty-desc">We couldn't load the links right now. Please refresh to try again.</p>
+          </div>
+        `;
+      }
     }
   }
 

@@ -118,6 +118,17 @@ input, textarea, select {
   outline: none;
 }
 
+/* ─── Focus Visibility & Accessibility ─── */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
 /* ─── Animated Background ─── */
 .bg-canvas {
   position: fixed;
@@ -276,6 +287,21 @@ input, textarea, select {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 6px;
+  min-height: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-name:empty::before {
+  content: '';
+  display: inline-block;
+  width: 140px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card-hover);
+  border: 1px solid var(--border);
+  animation: skeletonPulse 1.6s ease-in-out infinite;
 }
 
 .profile-bio {
@@ -466,6 +492,93 @@ input, textarea, select {
 .link-card:nth-child(7) { animation-delay: 0.85s; }
 .link-card:nth-child(8) { animation-delay: 0.95s; }
 
+/* ─── Skeleton Loading State ─── */
+.skeleton-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-radius: var(--link-radius);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  animation: skeletonPulse 1.6s ease-in-out infinite;
+}
+
+.skeleton-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.skeleton-text {
+  flex: 1;
+  height: 16px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  max-width: 65%;
+}
+
+@keyframes skeletonPulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* ─── Empty State (Public Profile) ─── */
+.profile-empty-state {
+  width: 100%;
+  max-width: 480px;
+  padding: 42px 24px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  text-align: center;
+  animation: fadeInUp 0.6s var(--ease-out) both;
+}
+
+.profile-empty-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 16px;
+  border-radius: 14px;
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-light);
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.15);
+}
+
+.profile-empty-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.profile-empty-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.profile-empty-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
 /* ─── Footer (legacy, kept for compatibility) ─── */
 .page-footer {
   margin-top: 48px;
@@ -618,15 +731,24 @@ input, textarea, select {
 /* ─── Responsive ─── */
 @media (max-width: 520px) {
   .main-container {
-    padding: 32px 16px 48px;
+    padding: 28px 16px 56px;
   }
 
   .profile-name {
-    font-size: 1.5rem;
+    font-size: 1.45rem;
   }
 
   .link-card {
     padding: 14px 16px;
+  }
+
+  .social-icon-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .profile-empty-state {
+    padding: 32px 18px;
   }
 }
 
